@@ -19,7 +19,11 @@ HuggingFace에서 운영하는 Daily Paper에서는 매일 새로운 기술에 �
 <img width="581" height="61" alt="제목 없는 다이어그램 drawio" src="https://github.com/user-attachments/assets/007cfad0-48f6-4528-9ab8-585294c01e2c" />
 <br><br>
 
-### 개발 스택
-- 🐍**언어** : Python
-- 🤖**모델** : Qwen/Qwen3-1.7B
-- ⏱️**스케줄링** : Git Hub Action
+### 🛠️ 개발 스택
+🐍**언어** : Python <br>
+🤖**모델** : Qwen/Qwen3-1.7B <br>
+⏱️**스케줄링** : Git Hub Action <br><br>
+
+### 🎯 향후 계획
+- 이메일 외 텔레그램 봇 연동 예정
+- 다양한 LLM 모델(ex.kanana)로 요약 및 번역 기능 고도화
