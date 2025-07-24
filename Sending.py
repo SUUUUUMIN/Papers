@@ -5,6 +5,7 @@ from email.mime.multipart import MIMEMultipart
 from email.header import Header
 from datetime import datetime
 import re
+import pytz
 
 # 메일 주소 유효성 검사
 def validate_emails(email_string):
@@ -23,20 +24,22 @@ def validate_emails(email_string):
     
     return valid_emails
 
-# 메일 정보
-SENDER_EMAIL = os.environ.get("SENDER_EMAIL")
-SENDER_PASSWORD = os.environ.get("SENDER_PASSWORD")
-
-emails_string = os.environ.get("RECEIVER_EMAIL")
-RECEIVER_EMAIL = validate_emails(emails_string)
-print("메일 보낸 사람 수 : ", len(RECEIVER_EMAIL))
-print("유효한 이메일 목록:", RECEIVER_EMAIL)  # 디버깅용
-
-SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 587
 
 # 이메일 전송 함수
-def send_automated_email(subject_prefix="자동 보고서"):
+def send_automated_email(date, content):
+    korea_timezone = pytz.timezone('Asia/Seoul')
+    # 메일 정보
+    SENDER_EMAIL = os.environ.get("SENDER_EMAIL")
+    SENDER_PASSWORD = os.environ.get("SENDER_PASSWORD")
+
+    emails_string = os.environ.get("RECEIVER_EMAIL")
+    RECEIVER_EMAIL = validate_emails(emails_string)
+    print("메일 보낸 사람 수 : ", len(RECEIVER_EMAIL))
+    print("유효한 이메일 목록:", RECEIVER_EMAIL)  # 디버깅용
+
+    SMTP_SERVER = "smtp.gmail.com"
+    SMTP_PORT = 587
+    
     if not SENDER_EMAIL or not SENDER_PASSWORD:
         print("오류: 이메일 사용자 이름 또는 비밀번호가 설정되지 않았습니다.")
         return False
@@ -45,10 +48,11 @@ def send_automated_email(subject_prefix="자동 보고서"):
         print("오류: 수신자 이메일 주소가 설정되지 않았습니다.")
         return False
     
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    email_subject = f"{subject_prefix}-{current_time}"
+    current_time = datetime.now(korea_timezone).strftime("%Y-%m-%d %H:%M:%S")
+    email_subject = f"오늘의 페이퍼 요약({current_time}(KST))"
     email_body = f"""
-    안녕하세요, 이것은 {current_time}에 발송된 자동 이메일입니다.
+    안녕하세요, {date} 페이퍼입니다.
+    {content}
     감사합니다.
     """
     
@@ -89,6 +93,3 @@ def send_automated_email(subject_prefix="자동 보고서"):
         print(f"[{current_time}] 이메일 전송 중 알 수 없는 오류 발생: {e}")
         print(f"사용된 이메일 목록: {RECEIVER_EMAIL}")
         return False
-
-if __name__ == "__main__":
-    send_automated_email()
