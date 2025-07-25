@@ -11,7 +11,7 @@ def crawling_data():
     paper_page = requests.get(paper_url)
     paper_soup = BeautifulSoup(paper_page.text, "html.parser")
 
-    date = paper_soup.find("meta", property="og:url").get("content").split("/")[-1]
+    date = paper_soup.find("div",class_="w-24 whitespace-nowrap text-center text-sm font-semibold text-gray-900 dark:text-gray-100").text
     today_papers_list = paper_soup.find_all("article")
     print(f"{date} 페이퍼 개수 : {len(today_papers_list)}개")
 
