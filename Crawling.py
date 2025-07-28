@@ -1,17 +1,32 @@
 import requests
 from bs4 import BeautifulSoup
+from datetime import datetime, timedelta
+
+def get_previous_weekday():
+    today = datetime.now()
+    day_of_week = today.weekday()
+    
+    if day_of_week == 0: # today = 월요일, previous = 금요일; 3일 전
+        previous_day = today-timedelta(days=3)
+    elif day_of_week == 6: # today = 일요일, previous = 금요일; 2일 전
+        previous_day = today - timedelta(days=2)
+    else:
+        previous_day = today-timedelta(days=1)
+    
+    return previous_day.strftime("%Y-%m-%d")
 
 # 허깅페이스 url
 def crawling_data():
     
     base_url = "https://huggingface.co"
-    paper_url = "https://huggingface.co/papers/" # 페이퍼 메인 페이지
-
-
+    date = get_previous_weekday()
+    paper_url = f"https://huggingface.co/papers/date/{date}"
+    print(paper_url)
+    
     paper_page = requests.get(paper_url)
     paper_soup = BeautifulSoup(paper_page.text, "html.parser")
 
-    date = paper_soup.find("div",class_="w-24 whitespace-nowrap text-center text-sm font-semibold text-gray-900 dark:text-gray-100").text
+    #date = paper_soup.find("div",class_="w-24 whitespace-nowrap text-center text-sm font-semibold text-gray-900 dark:text-gray-100").text
     today_papers_list = paper_soup.find_all("article")
     print(f"{date} 페이퍼 개수 : {len(today_papers_list)}개")
 
