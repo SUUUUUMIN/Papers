@@ -7,7 +7,7 @@ HuggingFace에서 운영하는 Daily Paper에서는 매일 새로운 기술에 �
 ### ✨ 서비스
 그래서, Daily Paper의 초록(Abstract)을 **한 줄로 요약하고 한글로 번역해** 메일로 전송하는 서비스<br>
 📅 **기간** : 평일 (월요일-금요일) <br>
-⏰ **시간** : 한국 시간(KST) 기준 매일 오전 10시 30분<br>
+⏰ **시간** : 한국 시간(KST) 기준 매일 오후 1시 30분(GitHub Actions의 처리 속도에 따라 지연될 수 있음)<br>
 
 ##### ⚙️ 주요 기능
 - 논문 크롤링 자동화 : [HuggingFace Daily Paper](https://huggingface.co/papers) 에서 최신 논문 자동 수집
