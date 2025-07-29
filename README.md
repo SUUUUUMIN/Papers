@@ -12,7 +12,7 @@ HuggingFace에서 운영하는 Daily Paper에서는 매일 새로운 기술에 �
 ##### ⚙️ 주요 기능
 - 논문 크롤링 자동화 : [HuggingFace Daily Paper](https://huggingface.co/papers) 에서 최신 논문 자동 수집
 - LLM 요약 및 번역 : 논문 초록을 간결하고 자연스러운 한국어로 요약 및 번역
-- 이메일 알림 : 요약된 논문을 이메일 주소로 편리하게 제공
+- 이메일 및 텔레그램 알림 : 요약된 논문을 이메일이나 텔레그램으로 편리하게 제공
 - 간편한 배포 및 관리 : GitHub Action의 스케줄링으로 별도의 서버 관리없이 자동 실행<br>
 
 ##### 🔄 전체 워크플로우
@@ -25,5 +25,4 @@ HuggingFace에서 운영하는 Daily Paper에서는 매일 새로운 기술에 �
 ⏱️**스케줄링** : Git Hub Action <br><br>
 
 ### 🎯 향후 계획
-- 이메일 외 텔레그램 봇 연동 예정
 - 다양한 LLM 모델(ex.kanana)로 요약 및 번역 기능 고도화
