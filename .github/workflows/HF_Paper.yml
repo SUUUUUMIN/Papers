@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   
 jobs:
-  send_email_job:
+  send_telegram_job:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

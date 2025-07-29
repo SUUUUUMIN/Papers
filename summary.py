@@ -47,7 +47,6 @@ def summarize_with_llm(papers):
             max_tokens=1024,
             temperature=0.7,
             top_p=0.9,
-            stop=["<|im_end|>"],
             stream=False
         )
 
