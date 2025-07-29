@@ -3,7 +3,7 @@ import requests
 import time
 import os
 
-
+# 포맷팅
 def format_result(idx, date, item, last):
     if idx == 0:
         text = f"""
@@ -28,6 +28,7 @@ link: {item['link']}
     """
     return text
 
+# 메시지 청킹
 def prepare_msg(date, summarize):
     body = []
     current_text = ""
@@ -45,6 +46,7 @@ def prepare_msg(date, summarize):
     body.append(current_text)
     return body
 
+# 메시지 전송
 def send_telegram_msg(date, summarize):
     body = prepare_msg(date, summarize)
     

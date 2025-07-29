@@ -1,6 +1,7 @@
 import os
 from llama_cpp import Llama
 
+# 요약 및 번역
 def summarize_with_llm(papers):
     repo_id = "Qwen/Qwen3-1.7B-GGUF"
     file_name = "Qwen3-1.7B-Q8_0.gguf"
@@ -9,8 +10,8 @@ def summarize_with_llm(papers):
         "n_ctx": 2048,
         "n_batch": 512,
         "n_threads": 4,
-        "n_gpu_layers": 0, # GPU 사용 시 여기에 레이어 수 지정 (예: -1 for all)
-        "verbose": False, # 로딩 과정 확인을 위해 True로 설정
+        "n_gpu_layers": 0, # CPU 사용
+        "verbose": False,
         "seed": -1,
         "f16_kv": True,
         "use_mlock": False,
@@ -46,7 +47,7 @@ def summarize_with_llm(papers):
             max_tokens=1024,
             temperature=0.7,
             top_p=0.9,
-            stop=["<|im_end|>"], # Qwen 모델에 적합한 stop 토큰 사용 권장
+            stop=["<|im_end|>"],
             stream=False
         )
 

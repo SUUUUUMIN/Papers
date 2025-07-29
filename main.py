@@ -1,7 +1,7 @@
-from Crawling import crawling_data
-from Summary import summarize_with_llm
-from Sending import send_automated_email
-from Telegram import send_telegram_msg
+from crawling import crawling_data
+from summary import summarize_with_llm
+from telegram import send_telegram_msg
+# from Sending import send_automated_email
 
 papers, date = crawling_data()
 summarize = summarize_with_llm(papers)
