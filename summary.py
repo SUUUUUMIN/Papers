@@ -1,11 +1,47 @@
 import os
 from llama_cpp import Llama
 
+# LLM 모델 답변 생성
+def generate_response(llm, PROMPT, content):
+    msg = [
+            {"role": "system", "content":PROMPT},
+            {"role": "user", "content": f"Please read the following text and provide a one-sentence summary in Korean: {content}"}
+        ]
+    
+    output = llm.create_chat_completion(
+            messages = msg,
+            max_tokens=1024,
+            temperature=0.7,
+            top_p=0.9,
+            stream=False
+        )
+    result = output['choices'][0]['message']['content']    
+    
+    return result.split("</think>")[-1].strip()
+
+# LLM 모델 도메인 분류
+def generate_domain (llm, PROMPT, content):
+    msg = [
+            {"role": "system", "content":PROMPT},
+            {"role": "user", "content": f"Classify this research paper into one research domain: {content}"}
+        ]
+    output = llm.create_chat_completion(
+            messages = msg,
+            max_tokens=1024,
+            temperature=0.7,
+            top_p=0.9,
+            stream=False
+        )
+    result = output['choices'][0]['message']['content']
+    
+    return result.split("</think>")[-1].strip()
+
+
 # 요약 및 번역
 def summarize_with_llm(papers):
-    repo_id = "Qwen/Qwen3-1.7B-GGUF"
-    file_name = "Qwen3-1.7B-Q8_0.gguf"
-
+    PROMPT_1 = os.environ.get("PROMPT_1")
+    PROMPT_2 = os.environ.get("PROMPT_2")
+    
     settings = {
         "n_ctx": 2048,
         "n_batch": 512,
@@ -18,42 +54,54 @@ def summarize_with_llm(papers):
         "use_mmap": True,
     }
     
-    llm = Llama.from_pretrained(
-        repo_id=repo_id,
-        filename=file_name,
+    # 요약 및 번역
+    repo_id_1 = "Qwen/Qwen3-1.7B-GGUF"
+    file_name_1 = "Qwen3-1.7B-Q8_0.gguf"
+    
+    llm1 = Llama.from_pretrained(
+        repo_id=repo_id_1,
+        filename=file_name_1,
         **settings,
         chat_format = "qwen"
     )
-    print("모델 로딩 완료")
+    print("요약 모델 업로드 완료")
+    temp={}
+    
+    for idx, (key, content) in enumerate(papers.items(),1):
+        output1 = generate_response(llm1, PROMPT_1, content)
+        temp[key] = output1
+    
+    # 첫 번째 모델 해제
+    del llm1
+    print("요약 완료 및 모델 해제")
+    
+    # 키워드
+    repo_id_2 = "Qwen/Qwen3-0.6B-GGUF"
+    file_name_2 = "Qwen3-0.6B-Q8_0.gguf"
+    
+    llm2 = Llama.from_pretrained(
+        repo_id=repo_id_2,
+        filename=file_name_2,
+        **settings,
+        chat_format = "qwen"
+    )
+    print("키워드 모델 업로드 완료")
     summarize = []
-    SYSTEM_PROMPT = os.environ.get("SYSTEM_PROMPT")
 
     for idx, (key, content) in enumerate(papers.items(),1):
         title, link = key
-        print("="*10, idx, title, "="*10)
-        result = {
+        result={
             "title": title,
             "link": link,
-            "response": None
+            "response" : temp[key],
+            "keywords" : None
         }
+        print("="*10, idx, title, "="*10)
         
-        msg = [
-            {"role": "system", "content":SYSTEM_PROMPT},
-            {"role": "user", "content": f"Please read the following text and provide a one-sentence summary in Korean: {content}"}
-        ]
+        output2 = generate_domain(llm2, PROMPT_2, content)
         
-        output = llm.create_chat_completion(
-            messages = msg,
-            max_tokens=1024,
-            temperature=0.7,
-            top_p=0.9,
-            stream=False
-        )
-
-        response = output['choices'][0]['message']['content']
-
-        print(response.split("</think>")[-1].strip())
-        result["response"] = response.split("</think>")[-1].strip()
+        result["keywords"] = output2
         summarize.append(result)
-        print("summarize 개수", len(summarize))
+        print(result)
+
     return summarize

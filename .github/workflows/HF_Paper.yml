@@ -1,11 +1,11 @@
-name: Daily_Paper_with_Telegram
+name: Daily_Paper_with_Telegram_and_Notion
 on:
   schedule:
     - cron: '1 4 * * 1-5'
   workflow_dispatch:
   
 jobs:
-  send_telegram_job:
+  send_telegram_save_notion:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -22,10 +22,10 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Run email script
         env:
-          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
-          SENDER_PASSWORD: ${{ secrets.SENDER_PASSWORD }}
-          RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL }}
           BOT_TOKEN : ${{ secrets.BOT_TOKEN }}
           CHAT_ID : ${{ secrets.CHAT_ID }}
-          SYSTEM_PROMPT : ${{ secrets.SYSTEM_PROMPT}}
+          PROMPT_1 : ${{ secrets.PROMPT_1 }}
+          PROMPT_2 : ${{ secrets.PROMPT_2 }}
+          NOTION_API : ${{ secrets.NOTION_API }}
+          DB_ID : ${{ secrets.DB_ID }}
         run: python main.py
