@@ -1,5 +1,14 @@
 import os
+import re
 from llama_cpp import Llama
+# 답변 유효성 체크
+def valid_response(text):
+    korean_pattern = re.compile(r"[가-힣]")
+    foreign_pattern = re.compile(r'[ひらがなカタカナ]|[ぁ-ゔ]|[ァ-ヾ]|[\u4e00-\u9fff\u3400-\u4dbf]')
+    if bool(korean_pattern.search(text)):
+        if not bool(foreign_pattern.search(text)):
+            return True
+    return False
 
 # LLM 모델 답변 생성
 def generate_response(llm, PROMPT, content):
@@ -15,9 +24,27 @@ def generate_response(llm, PROMPT, content):
             top_p=0.9,
             stream=False
         )
-    result = output['choices'][0]['message']['content']    
+    result = (output['choices'][0]['message']['content']).split("</think>")[-1].strip()
     
-    return result.split("</think>")[-1].strip()
+    if not valid_response(result):
+        while not valid_response(result):
+            print("답변 정제 시작 >> ",result)
+            msg = [
+                {"role": "user", "content": f"Please translate the following text to Korean: {result}"}
+            ]
+            output = llm.create_chat_completion(
+            messages = msg,
+            max_tokens=1024,
+            temperature=0.7,
+            top_p=0.9,
+            stream=False
+            )
+            result = (output['choices'][0]['message']['content']).split("</think>")[-1].strip()
+        
+        print("완료 >> ", result)
+    
+    return result
+
 
 # LLM 모델 도메인 분류
 def generate_domain (llm, PROMPT, content):
@@ -32,9 +59,9 @@ def generate_domain (llm, PROMPT, content):
             top_p=0.9,
             stream=False
         )
-    result = output['choices'][0]['message']['content']
+    result = (output['choices'][0]['message']['content']).split("</think>")[-1].strip()
     
-    return result.split("</think>")[-1].strip()
+    return result
 
 
 # 요약 및 번역
