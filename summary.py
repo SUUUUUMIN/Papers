@@ -30,7 +30,7 @@ def generate_response(llm, PROMPT, content):
         while not valid_response(result):
             print("답변 정제 시작 >> ",result)
             msg = [
-                {"role": "user", "content": f"Please translate the following text to Korean: {result}"}
+                {"role": "user", "content": f"Please translate the following text to Korean. Remove Chinese characters and Japanese characters, but keep English words and numbers:  {result}"}
             ]
             output = llm.create_chat_completion(
             messages = msg,
