@@ -14,7 +14,7 @@ def save_to_notion(date, summarize):
                 "Title": {"title":[{"text": {"content": summary["title"]}}]},
                 "Published_Date": {"date": {"start": date}},
                 "Link": {"url": summary["link"]},
-                "Keywords": {"multi_select": [{"name": summary["keywords"]}]}
+                "Domain": {"multi_select": [{"name": summary["keywords"]}]}
             },
             children = [
                 {
