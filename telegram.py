@@ -4,27 +4,17 @@ import os
 
 # 포맷팅
 def format_result(idx, date, item, last):
-    if idx == 0:
-        text = f"""
-안녕하세요, {date} papers입니다.
-<b>{idx+1}. {item["title"]}</b>
-{item['response']}
-link: {item['link']}
-    """
-    elif idx == last:
-        text = f"""
-<b>{idx+1}. {item["title"]}</b>
-{item['response']}
-link: {item['link']}
-
-감사합니다.
+    # 기본
+    text = f"""<b>{idx+1}. {item["title"]}</b>
+{item["response"] if item["response"] is not None else ""}
+link: {item["link"]}
 """
-    else:
-        text = f"""
-<b>{idx+1}. {item["title"]}</b>
-{item['response']}
-link: {item['link']}
-    """
+    if idx == 0:
+        text = f"안녕하세요, {date} 페이퍼입니다.\n\n" + text
+    
+    elif idx == last:
+        text+="\n감사합니다."
+    
     return text
 
 # 메시지 청킹

@@ -1,6 +1,6 @@
 import os
 import re
-from llama_cpp import Llama
+from llama_cpp import Llama, LlamaGrammar
 # 답변 유효성 체크
 def valid_response(text):
     korean_pattern = re.compile(r"[가-힣]")
@@ -12,6 +12,9 @@ def valid_response(text):
 
 # LLM 모델 답변 생성
 def generate_response(llm, PROMPT, content):
+    grammar_text = os.environ.get("GRAMMAR_TEXT")
+    grammar = LlamaGrammar.from_string(grammar_text)
+    
     msg = [
             {"role": "system", "content":PROMPT},
             {"role": "user", "content": f"Please read the following text and provide a one-sentence summary in Korean: {content}"}
@@ -22,26 +25,33 @@ def generate_response(llm, PROMPT, content):
             max_tokens=1024,
             temperature=0.7,
             top_p=0.9,
-            stream=False
+            stream=False,
+            grammar=grammar
         )
     result = (output['choices'][0]['message']['content']).split("</think>")[-1].strip()
     
-    if not valid_response(result):
-        while not valid_response(result):
-            print("답변 정제 시작 >> ",result)
-            msg = [
-                {"role": "user", "content": f"Clean this text by translating to Korean but keeping English words ansd numbers: {result}"}
-            ]
-            output = llm.create_chat_completion(
+    MAX_RETRY = 3
+    flag = False
+    while MAX_RETRY>0:
+        if valid_response(result):
+            flag = True
+            break
+        print("답변 정제 시작 >> ", result)
+        msg = [
+            {"role": "user", "content": f"Translate to Korean. Remove all Chinese characters and Japanese characters. Keep English words and numbers unchanged: {result}"}
+        ]
+        output = llm.create_chat_completion(
             messages = msg,
-            max_tokens=1024,
-            temperature=0.7,
-            top_p=0.9,
-            stream=False
-            )
-            result = (output['choices'][0]['message']['content']).split("</think>")[-1].strip()
-        
-        print("완료 >> ", result)
+            max_tokens = 1024,
+            temperature = 0.7,
+            top_p = 0.9,
+            stream = False
+        )
+        result = (output['choices'][0]['message']['content']).split("</think>")[-1].strip()
+        MAX_RETRY -= 1
+    
+    if not flag:
+        result = None
     
     return result
 
