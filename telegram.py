@@ -5,9 +5,16 @@ import os
 # 포맷팅
 def format_result(idx, date, item, last):
     # 기본
-    text = f"""<b>{idx+1}. {item["title"]}</b>
+    if item["response"] is None:
+        text = f"""<b>{idx+1}. {item["title"]}</b>
+link: {item["link"]}
+
+"""
+    else:
+        text = f"""<b>{idx+1}. {item["title"]}</b>
 {item["response"] if item["response"] is not None else ""}
 link: {item["link"]}
+
 """
     if idx == 0:
         text = f"안녕하세요, {date} 페이퍼입니다.\n\n" + text

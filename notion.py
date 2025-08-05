@@ -28,7 +28,7 @@ def save_to_notion(date, summarize):
                     "object": "block",
                     "type": "paragraph",
                     "paragraph":{
-                        "rich_text": [{"type": "text", "text": {"content": summary["response"]}}]
+                        "rich_text": [{"type": "text", "text": {"content": summary["response"] if summary["response"] is not None else ""}}]
                     }
                 },
             ]
