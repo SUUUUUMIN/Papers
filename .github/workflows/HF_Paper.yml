@@ -28,4 +28,5 @@ jobs:
           PROMPT_2 : ${{ secrets.PROMPT_2 }}
           NOTION_API : ${{ secrets.NOTION_API }}
           DB_ID : ${{ secrets.DB_ID }}
+          GRAMMAR_TEXT : $ {{ secrets.GRAMMAR_TEXT }}
         run: python main.py
