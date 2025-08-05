@@ -3,26 +3,22 @@ import time
 import os
 
 # 포맷팅
-def format_result(idx, date, item, last):
+def format_result(idx, date, item):
+    intro = f"안녕하세요, {date} 페이퍼입니다.\n\n" if idx == 0 else ""
+    
     # 기본
     if item["response"] is None:
-        text = f"""<b>{idx+1}. {item["title"]}</b>
+        text = f"""<b>{idx+1}. [{item["keywords"]}] {item["title"]}</b>
 link: {item["link"]}
 
 """
     else:
-        text = f"""<b>{idx+1}. {item["title"]}</b>
+        text = f"""<b>{idx+1}. [{item["keywords"]}] {item["title"]}</b>
 {item["response"] if item["response"] is not None else ""}
 link: {item["link"]}
 
 """
-    if idx == 0:
-        text = f"안녕하세요, {date} 페이퍼입니다.\n\n" + text
-    
-    elif idx == last:
-        text+="\n감사합니다."
-    
-    return text
+    return intro+text
 
 # 메시지 청킹
 def prepare_msg(date, summarize):
@@ -30,9 +26,8 @@ def prepare_msg(date, summarize):
     current_text = ""
     max_length = 4000
     
-    last = len(summarize)
     for idx, item in enumerate(summarize):
-        text = format_result(idx, date, item, last)
+        text = format_result(idx, date, item)
         
         if len(current_text)+len(text) > max_length:
             body.append(current_text)
