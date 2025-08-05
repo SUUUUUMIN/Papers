@@ -70,7 +70,8 @@ def generate_domain (llm, PROMPT, content):
             stream=False
         )
     result = (output['choices'][0]['message']['content']).split("</think>")[-1].strip()
-    
+    if "<think>" in result:
+        result = "ETC"
     return result
 
 
@@ -106,7 +107,7 @@ def summarize_with_llm(papers):
     
     for idx, (key, content) in enumerate(papers.items(),1):
         output1 = generate_response(llm1, PROMPT_1, content)
-        print(output1)
+        print(f"{idx}>>", output1)
         temp[key] = output1
     
     # 첫 번째 모델 해제
