@@ -3,12 +3,20 @@ import re
 from llama_cpp import Llama, LlamaGrammar
 # 답변 유효성 체크
 def valid_response(text):
+    msg = ""
     korean_pattern = re.compile(r"[가-힣]")
     foreign_pattern = re.compile(r'[ひらがなカタカナ]|[ぁ-ゔ]|[ァ-ヾ]|[\u4e00-\u9fff\u3400-\u4dbf]')
-    if bool(korean_pattern.search(text)):
-        if not bool(foreign_pattern.search(text)):
-            return True
-    return False
+    
+    # <think> 태그  처리
+    if "<think>" in text:
+        msg = f"Provide only the essential information in one line to Korean: {text}"
+        return msg, False
+    else:
+        if bool(korean_pattern.search(text)):
+            if not bool(foreign_pattern.search(text)):
+                return msg, True
+        msg = f"Translate to Korean. Remove all Chinese characters and Japanese characters. Keep English words and numbers unchanged: {text}"
+    return msg, False
 
 # LLM 모델 답변 생성
 def generate_response(llm, PROMPT, content):
@@ -31,14 +39,13 @@ def generate_response(llm, PROMPT, content):
     result = (output['choices'][0]['message']['content']).split("</think>")[-1].strip()
     
     MAX_RETRY = 3
-    flag = False
     while MAX_RETRY>0:
-        if valid_response(result):
-            flag = True
+        content, flag = valid_response(result)
+        if flag:
             break
         print("답변 정제 시작 >> ", result)
         msg = [
-            {"role": "user", "content": f"Translate to Korean. Remove all Chinese characters and Japanese characters. Keep English words and numbers unchanged: {result}"}
+            {"role": "user", "content": content}
         ]
         output = llm.create_chat_completion(
             messages = msg,
