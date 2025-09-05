@@ -7,5 +7,5 @@ from send_email import send_automated_email
 papers, date = crawling_data()
 summarize = summarize_with_llm(papers)
 # send_telegram_msg(date, summarize) #Telegram
-send_automated_email(date, summarize)
-save_to_notion(date, summarize) # Notion
+send_automated_email(date, summarize) #Email
+# save_to_notion(date, summarize) # Notion

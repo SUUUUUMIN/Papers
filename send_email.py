@@ -24,9 +24,19 @@ def validate_emails(email_string):
     
     return valid_emails
 
+# 포맷
+def make_format(summarize):
+    content = ""
+    for idx, item in enumerate(summarize):
+        if item["response"] is None:
+            content += f"""<b>{idx+1}. [{item["keywords"]}] {item["title"]}</b> \n link: {item["link"]}\n\n"""
+        else:
+            content += f"""<b>{idx+1}. [{item["keywords"]}] {item["title"]}</b> \n {item["response"] if item["response"] is not None else ""} link: {item["link"]} """
+
+    return content
 
 # 이메일 전송 함수
-def send_automated_email(date, content):
+def send_automated_email(date, summarize):
     korea_timezone = pytz.timezone('Asia/Seoul')
     # 메일 정보
     SENDER_EMAIL = os.environ.get("SENDER_EMAIL")
@@ -47,7 +57,7 @@ def send_automated_email(date, content):
     if not RECEIVER_EMAIL:
         print("오류: 수신자 이메일 주소가 설정되지 않았습니다.")
         return False
-    
+    content = make_format(summarize)
     current_time = datetime.now(korea_timezone).strftime("%Y-%m-%d %H:%M:%S")
     email_subject = f"오늘의 페이퍼 요약({current_time}(KST))"
     email_body = f"""
